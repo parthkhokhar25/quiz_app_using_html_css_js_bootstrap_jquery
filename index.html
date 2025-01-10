@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <style>
+      #startQuiz,
+      #quizBox,
+      #restartQuiz {
+        max-width: 800px;
+        margin: 50px auto 0px auto;
+      }
+      #q {
+        font-size: auto;
+      }
+      #a {
+        font-size: auto;
+      }
+      @font-face {
+        font-family: "bold";
+        src: url("fonts/OpenSans-Bold.ttf") format("ttf"),
+          /* Modern Browsers */ url("fonts/OpenSans-Bold.ttf") format("ttf"); /* Older Browsers */
+        /* Optionally include other font formats like .ttf or .otf */
+      }
+
+      body {
+        font-family: "bold", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===========================Start Quiz=================================== -->
+    <div id="startQuiz" class="bg-light p-5 shadow">
+      <h1 class="text-center">Quiz</h1>
+      <hr class="mb-5" />
+      <input
+        type="text"
+        placeholder="Enter Your Name"
+        id="playerName"
+        class="form-control w-auto m-auto"
+      />
+      <input
+        type="button"
+        value="Star Quiz"
+        class="btn w-auto btn-dark mt-3 m-auto d-block"
+        id="startQuizBtn"
+      />
+    </div>
+
+    <!-- ============================Quiz Box=================================== -->
+    <div id="quizBox" class="bg-light p-5 shadow">
+      <div class="row">
+        <div class="col">
+          <p id="changePlayerName" class="text-sm">Player</p>
+        </div>
+        <div class="col">
+          <p id="time" class="text-sm-center">00:00</p>
+        </div>
+        <div class="col">
+          <p id="points" class="text-sm-end">Points: 0</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col">
+          <p id="q" class="text">Question</p>
+        </div>
+      </div>
+
+      <div class="row row-cols-2 mt-auto">
+        <div class="col">
+          <input
+            type="button"
+            value="a"
+            id="a"
+            class="opt btn btn-dark w-100 mt-4"
+          />
+        </div>
+
+        <div class="col">
+          <input
+            type="button"
+            value="b"
+            id="b"
+            class="opt btn btn-dark w-100 mt-4"
+          />
+        </div>
+
+        <div class="col">
+          <input
+            type="button"
+            value="c"
+            id="c"
+            class="opt btn btn-dark w-100 mt-4"
+          />
+        </div>
+
+        <div class="col">
+          <input
+            type="button"
+            value="d"
+            id="d"
+            class="opt btn btn-dark w-100 mt-4"
+          />
+        </div>
+      </div>
+
+      <hr class="mb-5" />
+
+      <div class="row">
+        <div class="col">
+          <p id="questionNo" class="text-sm">Question No. 0/0</p>
+        </div>
+
+        <div class="col">
+          <input
+            type="button"
+            value="Next"
+            id="nextQuestion"
+            class="btn btn-outline-dark w-50 float-end"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================Restart Quiz================================ -->
+    <div id="restartQuiz" class="bg-light p-5 shadow">
+      <h3 id="finalPoints" class="text-center">Final Points: 0</h3>
+      <input
+        type="button"
+        value="Restart Quiz"
+        id="restartQuizBtn"
+        class="btn btn-dark m-auto d-block mt-3"
+      />
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+
+    <script>
+      // =================================Questions================================
+      var questions = [
+        {
+          q: "Which programming language is known for its use in web development and is often used alongside HTML and CSS?",
+          a: "Python",
+          b: "JavaScript",
+          c: "Java",
+          d: "Shaun",
+          ans: "b",
+        },
+        {
+          q: "Which keyword is used to define a function in JavaScript?",
+          a: "function",
+          b: "define",
+          c: "fun",
+          d: "def",
+          ans: "a",
+        },
+        {
+          q: "Which of the following is not a valid JavaScript data type?",
+          a: "boolean",
+          b: "string",
+          c: "integer",
+          d: "object",
+          ans: "c",
+        },
+      ];
+
+      // =================================Defaults================================
+      $("#quizBox").hide();
+      $("#restartQuiz").hide();
+      $("#nextQuestion").hide();
+
+      // =================================Variable================================
+      var pname = "";
+      var count = 0;
+      var cid = ""; // here cid means current ID
+      var points = 0;
+      var length = questions.length;
+
+      // =================================Start Quiz Button================================
+      $("#startQuizBtn").click(function () {
+        pname = $("#playerName").val();
+
+        $("#startQuiz").hide();
+        $("#quizBox").show();
+
+        if (pname != "") {
+          $("#changePlayerName").text(pname);
+        }
+
+        loadQuestion(); // function called
+        startTime();
+      });
+
+      // =================================Load Questions================================
+      function loadQuestion() {
+        $("#q").text(questions[count].q);
+        $("#a").val(questions[count].a);
+        $("#b").val(questions[count].b);
+        $("#c").val(questions[count].c);
+        $("#d").val(questions[count].d);
+
+        $("#questionNo").text(`Question No. ${count + 1}/${length}`);
+      }
+
+      // ================================= Validation ================================
+      $(".opt").click(function () {
+        cid = $(this).attr("id");
+
+        if (cid == questions[count].ans) {
+          $(this).css("background", "green");
+          points++;
+          // $("#points").text("Points: "+points);
+          $("#points").text(`Points: ${points}`);
+        } else {
+          $(this).css("background", "red");
+          $("#" + questions[count].ans)
+            .css("background", "green")
+            .fadeOut()
+            .fadeIn();
+        }
+
+        $(".opt").prop("disabled", "true");
+
+        $("#nextQuestion").show();
+      });
+
+      // =================================Next Button================================
+      $("#nextQuestion").click(function () {
+        count++;
+        $(".opt").css("background", "");
+        $(".opt").prop("disabled", "");
+
+        if (count >= length) {
+          $("#quizBox").hide();
+          $("#restartQuiz").show();
+          $("#finalPoints").text(`Final Points: ${points}`);
+        } else {
+          loadQuestion();
+        }
+
+        $("#nextQuestion").hide();
+      });
+
+      // =================================Restart Quiz Button================================
+      $("#restartQuizBtn").click(function () {
+        $("#quizBox").show();
+        $("#restartQuiz").hide();
+        resetQuiz();
+        loadQuestion();
+        startTime();
+      });
+
+      // =================================Reset Quiz================================
+      function resetQuiz() {
+        count = 0;
+        points = 0;
+        clearInterval(quiztime);
+        $("#time").text("00:00");
+        $("#points").text(`Points: 0`);
+        $("#questionNo").text(`Question No. ${count + 1}/${length}`);
+      }
+
+      // ===================================Timer=====================================
+
+      // ===========Variables===========
+      var totalmins = 0; // mins given by quiz master
+      var convertedtosecs = 0; // mins converted to seconds
+      var remainingmins = 0;
+      var remainingsecs = 0;
+      var quiztime = "";
+      // ==============Start time function================
+      function startTime() {
+        totalmins = 2;
+        convertedtosecs = 60 * totalmins;
+
+        function timer() {
+          convertedtosecs--;
+
+          remainingmins = Math.floor(convertedtosecs / 60);
+          remainingsecs = convertedtosecs % 60;
+
+          if (remainingmins <= 9 && remainingmins >= 0) {
+            remainingmins = "0" + remainingmins;
+          }
+
+          if (remainingsecs <= 9 && remainingsecs >= 0) {
+            remainingsecs = "0" + remainingsecs;
+          }
+
+          $("#time").text(`${remainingmins}:${remainingsecs}`);
+          if (convertedtosecs == 0) {
+            clearInterval(quiztime);
+            $("#quizBox").hide();
+            $("#restartQuiz").show();
+          }
+        }
+        // setTimeout()
+        quiztime = setInterval(timer, 1000); // it runs timer() function every 1 sec
+      }
+    </script>
+  </body>
+</html>
